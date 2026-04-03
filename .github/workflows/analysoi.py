@@ -13,14 +13,14 @@ for e, name in extensions.items():
 # Käydään projektin direktory läpi tiedosto kerrallaan
 for root, dirs, files in os.walk("."):
     for file in files:
-        path = os.join(root, file)
+        path = os.path.join(root, file)
         
         
         # https://stackoverflow.com/questions/541390/extracting-extension-from-filename
-        ext = path. os.path.splitext(path)
+        ext = os.path.splitext(path)
 
         # Käsitellään 
-        if ext in storage.keys:
+        if ext in storage.keys():
             storage[ext]["data"].append(ext)
 
 
@@ -29,7 +29,7 @@ for root, dirs, files in os.walk("."):
 # Kun data on kerätty luodaan raportti
 
 print("Detected lanquages: ")
-for s in storage:
+for s in storage.values():
 
     # Jos storage["data"] lista ei ole tyhjä
     if s["data"]:
