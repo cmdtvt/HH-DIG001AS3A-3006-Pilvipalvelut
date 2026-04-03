@@ -44,7 +44,7 @@ for root, dirs, files in os.walk("."):
         # https://stackoverflow.com/questions/541390/extracting-extension-from-filename
         # Palauttaa tuple (sijainti, pääte)
         ext = os.path.splitext(path)
-        print(ext[1])
+        #print(ext[1])
 
         # Käsitellään 
         if ext[1] in storage.keys():
@@ -82,7 +82,7 @@ for s in storage.values():
         report_write("Found: {0}".format(s["name"]))
 
 
-report_write("Design patterns found: ")
+report_write("\n\nDesign patterns found: ")
 for method, s in heuristics.items():
     # Jos storage["data"] lista ei ole tyhjä
     if s["found"]:
