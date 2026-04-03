@@ -3,31 +3,26 @@ import os
 # Dictionaryt haettavista tiedoista.
 extensions = {".js":"Javascript",".py":"Python",".ts":"Typescript",".java":"Java",".css":"CSS",".html":"HTML"}
 heuristics = {
-    "Singleton": [
-        "getInstance",
-        "static instance"
-    ],
-
-    "Factory Method": [
-        "create",
-        "factory"
-    ],
-
-    "Observer": [
-        "notify",
-        "subscribe",
-        "observer"
-    ],
-
-    "Strategy": [
-        "Strategy",
-        "interface"
-    ],
-
-    "Decorator": [
-        "Decorator",
-        "wrap"
-    ]
+    "Singleton": {
+        "search": ["getInstance", "static instance"],
+        "found": False
+    },
+    "Factory Method": {
+        "search": ["create", "factory"],
+        "found": False
+    },
+    "Observer": {
+        "search": ["notify", "subscribe", "observer"],
+        "found": False
+    },
+    "Strategy": {
+        "search": ["Strategy", "interface"],
+        "found": False
+    },
+    "Decorator": {
+        "search": ["Decorator", "wrap"],
+        "found": False
+    }
 }
 
 # Luodaan storage johon luodaan dynaamisesti varasto skannattaville tiedostoille haluttavista päätteistä
@@ -55,6 +50,19 @@ for root, dirs, files in os.walk("."):
         if ext[1] in storage.keys():
             storage[ext[1]]["data"].append(ext[0])
 
+        
+        # Jos avatusta tiedostosta löytyy definattu sana asetetaan found trueksi
+        # Olisi ollut järkevää tehdä tuo toinen haku samalla tavalla koska paljon yksinkertaisempi kuin rakentaa tietovarasto eri paikkaan
+        # storage muuttuja antaa kumminkin mahdollisuuden tallentaa enemmän tietoa jos sitä halutaan ulos tulevaisuudessa.
+        with open(path, encoding="utf-8", errors="ignore") as f:
+            for method, data in heuristics.items():
+                # if data["search"] in f.read():
+                #     data["found"] = True
+
+                for searched in data["search"]:
+                    if searched in f.read():
+                        data["found"] = True
+
 
 
 report_text = ""
@@ -74,9 +82,12 @@ for s in storage.values():
         report_write("Found: {0}".format(s["name"]))
 
 
+report_write("Design patterns found: ")
+for method, s in heuristics.items():
+    # Jos storage["data"] lista ei ole tyhjä
+    if s["found"]:
+        report_write("Found: {0}".format(method))
+
 with open("analysis_report.txt", "w") as f:
     f.write(report_text)
-
-
-
 
