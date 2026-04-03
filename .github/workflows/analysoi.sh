@@ -1,0 +1,5 @@
+echo "Detected languages:"
+find . -type f -name "*.py" | grep -q . && echo "- Python"
+find . -type f -name "*.java" | grep -q . && echo "- Java"
+find . -type f -name "*.js" | grep -q . && echo "- JavaScript"
+find . -type f -name "*.ts" | grep -q . && echo "- TypeScript"
