@@ -1,0 +1,21 @@
+.container {
+
+    margin-top: 20vh;
+    display: flex;
+    gap: 10px;
+}
+
+.input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #cfcfcfcf;
+}
+
+.button {
+    padding: 12px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
