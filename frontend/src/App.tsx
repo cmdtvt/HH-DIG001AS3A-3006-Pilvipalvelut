@@ -5,6 +5,43 @@ import { auth, logout } from "./authService";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [nimi, setNimi] = useState("");
+
+  useEffect(() => {
+    let ladattu = localStorage.getItem("codename")
+    if (ladattu !== null) {
+      setNimi(ladattu)
+    }
+  }, []);
+
+  let eka = [
+    "Kenraali",
+    "Tohtori",
+    "Mestari",
+    "Kalkkuna",
+    "Presidentti",
+    "Eversti",
+    "Suomen",
+    "Rehtori"
+  ]
+
+  let toka = [
+    "Kalkkuna",
+    "Pelaaja",
+    "Voima",
+    "Voittaja",
+    "Ilmoittaja",
+    "Majuri",
+    "Tohtori Mestari",
+    "Kokki",
+    "Bruutus",
+    "Murskaaja",
+    "Purkaja",
+    "Kehittäjä",
+    "Golffari",
+  ]
+
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -14,12 +51,29 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+
+  useEffect(() => {
+    if (!user) return;
+
+    const key = "codename_"+user.uid;
+    const saved = localStorage.getItem(key);
+
+    if (saved) {
+      setNimi(saved);
+    } else {
+      let gen_name = eka[Math.floor(Math.random() * eka.length)] +" " + toka[Math.floor(Math.random() * toka.length)];
+
+      localStorage.setItem(key, gen_name);
+      setNimi(gen_name);
+    }
+  }, [user]);
+
   return (
 
     <div>
       {user ? (
         <>
-          <p>👋 Tervetuloa, {user.email}</p>
+          <p>👋 Tervetuloa, {nimi || user.email}</p>
           <button onClick={logout}>Kirjaudu ulos</button>
         </>
       ) : (
@@ -30,24 +84,4 @@ function App() {
 
 }
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-// Your web app's Firebase configuration
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyAGI-jQwX14gGvOnUOiynVzvzDwquP5sCg",
-  authDomain: "vite-pilvi-dd6f9.firebaseapp.com",
-  projectId: "vite-pilvi-dd6f9",
-  storageBucket: "vite-pilvi-dd6f9.firebasestorage.app",
-  messagingSenderId: "81009303467",
-  appId: "1:81009303467:web:f7b49ef859d3bb79d47cee"
-};
-// Initialize Firebase
-
-const app = initializeApp(firebaseConfig);
-
-export default App;
+export default App

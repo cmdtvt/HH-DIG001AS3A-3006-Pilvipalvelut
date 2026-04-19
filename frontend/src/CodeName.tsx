@@ -4,7 +4,6 @@ import styles from "./CodeName.module.css";
 function CodeName() {
   const [nimi, setNimi] = useState("");
 
-
   // Käynnistää kyseisen koodin vain kerran kun komponentti käynnistetään
   // Viimeisenä olevaan listaan voi määrittää jotain johon reagoidaan. Jos jättää tyhjäksi käynnistyy ainoastaan kun komponentti ladataan ekan kerran.
   useEffect(() => {
