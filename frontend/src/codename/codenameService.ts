@@ -30,15 +30,15 @@ function generate() {
     return eka[Math.floor(Math.random() * eka.length)] +" "+ toka[Math.floor(Math.random() * toka.length)]
 }
 
-function handleGenerate() {
-    setNimi(generate())
-}
+// function handleGenerate() {
+//     setNimi(generate())
+// }
 
 
-function handleSave(nimi:string) {
-    localStorage.setItem("codename", nimi);
-    alert("Tallennettu")
-}
+// function handleSave(nimi:string) {
+//     localStorage.setItem("codename", nimi);
+//     alert("Tallennettu")
+// }
 
 export function getOrCreateCodename(uid: string): string {
     const key = `codename_${uid}`;
