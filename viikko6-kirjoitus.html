@@ -32,6 +32,15 @@
                 Monissa seurantapalveluissa on myös mahdollisuus nähdä mistä käyttäjä on tulossa sivulle. Esimerkiksi maininta blogissa voi tuoda lisää käyttäjiä ja tähän voidaan reagoida sitten eri tavoilla.
             </p>
 
+            <h2>CORS-ongelmien välttäminen</h2>
+            <p>
+                Cors-ongelmia tulee eniten vastaan testattaessa ja testiympäristöissä. Tämä johtuu siitä, että yleensä ohjelman etu ja takaosa sijaitsevat erilaisissa osoitteissa kuin tuotannossa oleva versio.
+                Esim testissä saattaa olla pelkästään HTTP-käytössä kuin tuotannossa HTTPS
+            </p>
+            <p>
+                Useimmiten lisäämällä sallitut osoitteet Access-Control-Allow-Origin- headeriin riittää.
+            </p>
+
 
             <a href="viikko6-sivu.html">Sivulle</a>
         </section>
