@@ -1,8 +1,12 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
+import type { Session } from "../types/Session";
 
-export function resolveRound(session:any, guess:number) {
+
+export function resolveRound(session:Session, guess:number) {
+    console.log(session.id);
+    console.log(guess);
     return "adada"
 }
 

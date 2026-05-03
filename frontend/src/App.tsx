@@ -17,11 +17,16 @@ function App() {
 	const [codename, setCodename] = useState<string>("");
 	const [user, setUser] = useState<User | null>(null);
 
+	function getConsent(): boolean | null {
+		const value = localStorage.getItem('consent');
+		if (value === null) return null;
+		return value === "true";
+	}
 
 	function useCloudflareAnalytics() {
 		const trackEvent = useCallback(
 			(eventName: string, data?: Record<string, any>) => {
-			// if (!getConsent()) return; // Jos haluaa tarkistaa 6.1 kohdan consentin
+			if (!getConsent()) return; // Jos haluaa tarkistaa 6.1 kohdan consentin
 			if (!window._cfq) {
 				window._cfq = [];
 			}
@@ -40,24 +45,25 @@ function App() {
 
 		return { trackEvent };
 	}
+	useCloudflareAnalytics()
 
-	function RouteAnalytics() {
-		// const location = useLocation(); // Tämä voin jos käyttä router:ia
-		const { trackEvent } = useCloudflareAnalytics();  
-		const initialReferrer = useRef<string>(
-			document.referrer || "direct"
-		);
+	// function RouteAnalytics() {
+	// 	// const location = useLocation(); // Tämä voin jos käyttä router:ia
+	// 	const { trackEvent } = useCloudflareAnalytics();  
+	// 	const initialReferrer = useRef<string>(
+	// 		document.referrer || "direct"
+	// 	);
 
-		useEffect(() => {
-			trackEvent("page_view", {
-			referrer: initialReferrer.current,
-			landingPath: window.location.pathname,
-			//path: location.pathname
-			});
-		}, [trackEvent]);
+	// 	useEffect(() => {
+	// 		trackEvent("page_view", {
+	// 		referrer: initialReferrer.current,
+	// 		landingPath: window.location.pathname,
+	// 		//path: location.pathname
+	// 		});
+	// 	}, [trackEvent]);
 
-		return null;
-	}
+	// 	return null;
+	// }
 
 
 	useEffect(() => {
