@@ -1,8 +1,7 @@
+import type { Player } from "./Player";
 
-// import type { Player } from "./Player";
 
 export type SessionStatus = "waiting" | "playing" | "finished";
-
 export type Session = {
     id: string;
     sessionName: string;
@@ -13,4 +12,7 @@ export type Session = {
     createdAt: unknown;
     createdBy: unknown;
     lastActivity?: unknown;
+
+    //Might not be needed in the end.
+    players: Record<string, Player>;
 };
