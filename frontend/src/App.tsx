@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import './App.css'
 import LoginForm from './LoginForm';
@@ -9,6 +9,7 @@ import { QuizForm } from './components/QuizForm';
 import { createSession, subscribeToSession } from './game/gameSessionService';
 import { resolveRound } from './game/gameController';
 import { type Session } from './types/Session';
+import ConsentBanner from './components/ConsentBanner';
 // import { type Player } from './types/Player';
 
 function App() {
@@ -17,6 +18,46 @@ function App() {
 	const [user, setUser] = useState<User | null>(null);
 
 
+	function useCloudflareAnalytics() {
+		const trackEvent = useCallback(
+			(eventName: string, data?: Record<string, any>) => {
+			// if (!getConsent()) return; // Jos haluaa tarkistaa 6.1 kohdan consentin
+			if (!window._cfq) {
+				window._cfq = [];
+			}
+
+			window._cfq.push([
+				"trackEvent",
+				{
+				name: eventName,
+				...data,
+				timestamp: new Date().toISOString(),
+				},
+			]);
+			},
+			[]
+		);
+
+		return { trackEvent };
+	}
+
+	function RouteAnalytics() {
+		// const location = useLocation(); // Tämä voin jos käyttä router:ia
+		const { trackEvent } = useCloudflareAnalytics();  
+		const initialReferrer = useRef<string>(
+			document.referrer || "direct"
+		);
+
+		useEffect(() => {
+			trackEvent("page_view", {
+			referrer: initialReferrer.current,
+			landingPath: window.location.pathname,
+			//path: location.pathname
+			});
+		}, [trackEvent]);
+
+		return null;
+	}
 
 
 	useEffect(() => {
@@ -88,6 +129,7 @@ function App() {
         </div>
       </section>
       <section id="spacer"></section>
+	  <ConsentBanner></ConsentBanner>
     </>
   )
 }
