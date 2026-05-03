@@ -1,87 +1,95 @@
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
-import LoginForm from "./LoginForm";
-import { auth, logout } from "./authService";
+import { useState, useEffect } from 'react'
+
+import './App.css'
+import LoginForm from './LoginForm';
+import { auth, logout } from './authService';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { getOrCreateCodename } from './codename/codenameService';
+import { QuizForm } from './components/QuizForm';
+import { createSession, subscribeToSession } from './game/gameSessionService';
+import { resolveRound } from './game/gameController';
+import { type Session } from './types/Session';
+// import { type Player } from './types/Player';
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [nimi, setNimi] = useState("");
-
-  useEffect(() => {
-    let ladattu = localStorage.getItem("codename")
-    if (ladattu !== null) {
-      setNimi(ladattu)
-    }
-  }, []);
-
-  let eka = [
-    "Kenraali",
-    "Tohtori",
-    "Mestari",
-    "Kalkkuna",
-    "Presidentti",
-    "Eversti",
-    "Suomen",
-    "Rehtori"
-  ]
-
-  let toka = [
-    "Kalkkuna",
-    "Pelaaja",
-    "Voima",
-    "Voittaja",
-    "Ilmoittaja",
-    "Majuri",
-    "Tohtori Mestari",
-    "Kokki",
-    "Bruutus",
-    "Murskaaja",
-    "Purkaja",
-    "Kehittäjä",
-    "Golffari",
-  ]
+	const [session, setSession] = useState<Session | null>(null);
+	const [codename, setCodename] = useState<string>("");
+	const [user, setUser] = useState<User | null>(null);
 
 
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-    });
 
-    return () => unsubscribe();
-  }, []);
+	useEffect(() => {
+
+		//https://firebase.google.com/docs/auth/web/manage-users
+		const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+			if (!firebaseUser) {
+				setUser(null);
+				return;
+			}
+			setUser(firebaseUser);
 
 
-  useEffect(() => {
-    if (!user) return;
+			const name = getOrCreateCodename(firebaseUser.uid);
+			setCodename(name);
 
-    const key = "codename_"+user.uid;
-    const saved = localStorage.getItem(key);
+			const sessionId = await createSession({
+				name: name + "n-arvaussessio",
+				creatorName: name,
+				creatorId: firebaseUser.uid
+			});
 
-    if (saved) {
-      setNimi(saved);
-    } else {
-      let gen_name = eka[Math.floor(Math.random() * eka.length)] +" " + toka[Math.floor(Math.random() * toka.length)];
 
-      localStorage.setItem(key, gen_name);
-      setNimi(gen_name);
-    }
-  }, [user]);
+			subscribeToSession(sessionId, (updatedSession) => {
+				setSession(updatedSession);
+			});
+		});
+
+		return () => unsubscribeAuth();
+	}, []);
+
+
+	function submitGuess(guess: number): void {
+		if ( session ) {
+			try {
+				resolveRound(session, guess);
+			} catch (error) {
+				console.error("Kierroksen luonti epäonnistui: ", error);
+			}  
+		}
+	}
 
   return (
+    <>
+      <section id="center">
 
-    <div>
-      {user ? (
-        <>
-          <p>👋 Tervetuloa, {nimi || user.email}</p>
-          <button onClick={logout}>Kirjaudu ulos</button>
-        </>
-      ) : (
-        <LoginForm />
-      )}
-    </div>
-  );
+        <div>
+          <h1>Heippa maailma!</h1>
+        </div>
 
+        <div>
+          {user ? (
+            <>
+              <p>👋 Tervetuloa, {codename}</p>
+              <button onClick={logout}>Kirjaudu ulos</button>
+            </>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+
+        <div>
+          <QuizForm 
+            onSubmitGuess={(guess) => submitGuess(guess)} 
+            players={[]}
+			// {session ? Object.values(session.players) : []}
+            currentUserId={codename}
+          />
+        </div>
+      </section>
+      <section id="spacer"></section>
+    </>
+  )
 }
 
 export default App
